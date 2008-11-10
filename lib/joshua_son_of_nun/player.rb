@@ -40,7 +40,7 @@ module JoshuaSonOfNun
     end
     
     def destroyer_placement
-      destoryer.initial_placement
+      destroyer.initial_placement
     end
     
     def patrolship_placement
@@ -128,7 +128,7 @@ module JoshuaSonOfNun
       end
       
       def target_for_current_shot
-        row = ROWS[(@shots_taken) / 10]
+        row = Board::ROWS[(@shots_taken) / 10]
         col = @shots_taken % 10 + 1
         return "#{row}#{col}"
       end

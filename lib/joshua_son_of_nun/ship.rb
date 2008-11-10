@@ -29,10 +29,10 @@ module JoshuaSonOfNun
   end
   
   class Patrolship < Ship
-    self.length = 3
+    self.length = 2
   end
   
   class Submarine < Ship
-    self.length = 2
+    self.length = 3
   end
 end
