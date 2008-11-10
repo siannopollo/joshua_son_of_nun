@@ -111,8 +111,6 @@ module JoshuaSonOfNun
     def game_over(result, disqualification_reason=nil)
     end
     
-    # Non API methods #####################################
-    
     private
       def reset
         srand
