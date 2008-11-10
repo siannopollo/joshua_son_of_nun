@@ -1,11 +1,10 @@
 module JoshuaSonOfNun
-
   # Battleship Player
   #
   # Battleship is board game between two players.  See http://en.wikipedia.org/wiki/Battleship for more information and
   # game rules.
   #
-  # A player represents the conputer AI to play a game of Battleship.  It should know how to place ships and target
+  # A player represents the computer AI to play a game of Battleship.  It should know how to place ships and target
   # the opponents ships.
   #
   # This version of Battleship is played on a 10 x 10 grid where rows are labled by the letters A - J and
@@ -14,7 +13,13 @@ module JoshuaSonOfNun
   # may only target one square, reguardless of whether it resulted in a hit or not, before changing turns with her opponent.
   #
   class JoshuaSonOfNun
-
+    attr_reader :personal_board, :opponent_board, :opponent
+    attr_reader :carrier, :battleship, :destroyer, :submarine, :patrolship
+    
+    def initialize
+      reset
+    end
+    
     # This method is called at the beginning of each game.  A player may only be instantiated once and used to play many games.
     # So new_game should reset any internal state acquired in previous games so that it is prepared for a new game.
     #
@@ -22,67 +27,30 @@ module JoshuaSonOfNun
     # play the game differently based on the opponent.
     #
     def new_game(opponent_name)
+      @opponent = opponent_name
       reset
     end
-
-    # Returns the placement of the carrier. A carrier consumes 5 squares.
-    #
-    # The return value is a string that describes the placements of the ship.
-    # The placement string must be in the following format:
-    #
-    #   "#{ROW}#{COL} #{ORIENTATION}"
-    #
-    # eg
-    #
-    #   A1 horizontal # the ship will occupy A1, A2, A3, A4, and A5
-    #   A1 vertical # the ship will occupy A1, B1, C1, D1, and E1
-    #   F5 horizontal # the ship will occupy F5, F6, F7, F8, and F9
-    #   F5 vertical # the ship will occupy F5, G5, H5, I5, and J5
-    #
-    # The ship must not fall off the edge of the map.  For example, a carrier placement of 'A8 horizontal' would
-    # not leave enough space in the A row to accomidate the carrier since it requires 5 squares.
-    #
-    # Ships may not overlap with other ships.  For example a carrier placement of 'A1 horizontal' and a submarine
-    # placement of 'A1 vertical' would be invalid because bothe ships are trying to occupy the square A1.
-    #
-    # Invalid ship placements will result in disqualification of the player.
-    #
-    def carrier_placement
-      return "A1 horizontal"
-    end
-
-    # Returns the placement of the battleship. A battleship consumes 4 squares.
-    #
-    # See carrier_placement for details on ship placement
-    #
+    
     def battleship_placement
-      return "B1 horizontal"
+      battleship.initial_placement
     end
-
-    # Returns the placement of the destroyer. A destroyer consumes 3 squares.
-    #
-    # See carrier_placement for details on ship placement
-    #
+    
+    def carrier_placement
+      carrier.initial_placement
+    end
+    
     def destroyer_placement
-      return "C1 horizontal"
+      destoryer.initial_placement
     end
-
-    # Returns the placement of the submarine. A submarine consumes 3 squares.
-    #
-    # See carrier_placement for details on ship placement
-    #
-    def submarine_placement
-      return "D1 horizontal"
-    end
-
-    # Returns the placement of the patrolship. A patrolship consumes 2 squares.
-    #
-    # See carrier_placement for details on ship placement
-    #
+    
     def patrolship_placement
-      return "E1 horizontal"
+      patrolship.initial_placement
     end
-
+    
+    def submarine_placement
+      submarine.initial_placement
+    end
+    
     # Returns the coordinates of the players next target.  This method will be called once per turn.  The player
     # should return target coordinates as a string in the form of:
     #
@@ -105,7 +73,7 @@ module JoshuaSonOfNun
       @shots_taken += 1
       return target
     end
-
+    
     # target_result will be called by the system after a call to next_target.  The paramters supplied inform the player
     # of the results of the target.
     #
@@ -119,7 +87,7 @@ module JoshuaSonOfNun
     #
     def target_result(coordinates, was_hit, ship_sunk)
     end
-
+    
     # enemy_targeting is called by the system to inform a player of their apponents move.  When the opponent targets
     # a square, this method is called with the coordinates.
     #
@@ -128,7 +96,7 @@ module JoshuaSonOfNun
     #
     def enemy_targeting(coordinates)
     end
-
+    
     # Called by the system at the end of a game to inform the player of the results.
     #
     #   result  : 1 of 3 possible values (:victory, :defeate, :disqualified)
@@ -142,28 +110,27 @@ module JoshuaSonOfNun
     #
     def game_over(result, disqualification_reason=nil)
     end
-
+    
     # Non API methods #####################################
-
-    attr_reader :opponent, :targets, :enemy_targeted_sectors, :result, :disqualification_reason #:nodoc:
-
-    def initialize #:nodoc:
-      reset
-    end
-
-    private ###############################################
-
-    def reset
-      @shots_taken = 0
-    end
-
-    ROWS = %w{ A B C D E F G H I J }
-    def target_for_current_shot
-      row = ROWS[(@shots_taken) / 10]
-      col = @shots_taken % 10 + 1
-      return "#{row}#{col}"
-    end
-
+    
+    private
+      def reset
+        srand
+        
+        @personal_board = Board.new
+        @opponent_board = Board.new
+        
+        @battleship = Battleship.new(@personal_board)
+        @carrier = Carrier.new(@personal_board)
+        @destroyer = Destroyer.new(@personal_board)
+        @patrolship = Patrolship.new(@personal_board)
+        @submarine = Submarine.new(@personal_board)
+      end
+      
+      def target_for_current_shot
+        row = ROWS[(@shots_taken) / 10]
+        col = @shots_taken % 10 + 1
+        return "#{row}#{col}"
+      end
   end
-
 end

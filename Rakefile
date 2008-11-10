@@ -6,6 +6,7 @@ require 'battleship_tournament/submit'
 desc "Run all specs"
 Spec::Rake::SpecTask.new('spec') do |t|
   t.spec_files = FileList['spec/**/*.rb']
+  t.spec_opts = ['--options', 'spec/spec.opts']
   t.rcov = false
 end
 
@@ -31,8 +32,8 @@ spec = Gem::Specification.new do |s|
   ##
   ###########################################
   s.description = "A battleship player"
-  s.author = "Anonymous"
-  s.email = "authors@email.com"
+  s.author = "Steve Iannopollo"
+  s.email = "steve@iannopollo.com"
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
