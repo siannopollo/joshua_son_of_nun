@@ -13,7 +13,7 @@ module JoshuaSonOfNun
   # may only target one square, reguardless of whether it resulted in a hit or not, before changing turns with her opponent.
   #
   class Player
-    attr_reader :personal_board, :opponent_board, :opponent
+    attr_reader :personal_board, :opponent_board, :opponent, :strategy
     attr_reader :carrier, :battleship, :destroyer, :submarine, :patrolship
     
     def initialize
@@ -69,9 +69,7 @@ module JoshuaSonOfNun
     # It is illegal to illegal to target a sector more than once.  Doing so will also result in disqualification.
     #
     def next_target
-      target = target_for_current_shot
-      @shots_taken += 1
-      return target
+      strategy.next_target.to_s
     end
     
     # target_result will be called by the system after a call to next_target.  The paramters supplied inform the player
@@ -86,6 +84,7 @@ module JoshuaSonOfNun
     # hit, a player my choose to target neighboring squares to hit and sink the remainder of the ship.
     #
     def target_result(coordinates, was_hit, ship_sunk)
+      strategy.register_result! was_hit, ship_sunk
     end
     
     # enemy_targeting is called by the system to inform a player of their apponents move.  When the opponent targets
@@ -123,12 +122,8 @@ module JoshuaSonOfNun
         @destroyer = Destroyer.new(@personal_board)
         @patrolship = Patrolship.new(@personal_board)
         @submarine = Submarine.new(@personal_board)
-      end
-      
-      def target_for_current_shot
-        row = Board::ROWS[(@shots_taken) / 10]
-        col = @shots_taken % 10 + 1
-        return "#{row}#{col}"
+        
+        @strategy = Strategy.select(@opponent_board)
       end
   end
 end

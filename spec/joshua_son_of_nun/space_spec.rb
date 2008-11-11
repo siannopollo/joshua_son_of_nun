@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe JoshuaSonOfNun::Board::Space do
+describe JoshuaSonOfNun::Space do
   before do
     @model = Space('A1')
   end
@@ -15,5 +15,11 @@ describe JoshuaSonOfNun::Board::Space do
     @model.adjacent?(Space('A10')).should be_false
     @model.adjacent?(Space('C3')).should be_false
     Space('H7').adjacent?(Space('J7')).should be_false
+  end
+  
+  it "should know which spaces are crosswise to the given space" do
+    @model.crosswise_spaces.should == [Space('A2'), Space('B1')]
+    Space('C10').crosswise_spaces.should == [Space('B10'), Space('D10'), Space('C9')]
+    Space('E5').crosswise_spaces.should == [Space('D5'), Space('E6'), Space('F5'), Space('E4')]
   end
 end

@@ -13,7 +13,6 @@ describe JoshuaSonOfNun::Board do
   it "should know about which spaces are valid" do
     @model.valid_spaces.should include(Space('A1'))
     @model.valid_spaces.should include(Space('A10'))
-    @model.valid_spaces.should_not include(Space('A11'))
   end
   
   it "should return the spaces for placement for a ship of given length" do
@@ -24,7 +23,7 @@ describe JoshuaSonOfNun::Board do
       [Space('A1'), Space('B1'), Space('C1'), Space('D1'), Space('E1')]
     
     @model.spaces_for_placement(Space('A8 horizontal'), 5).should ==
-      [Space('A8'), Space('A9'), Space('A10'), JoshuaSonOfNun::Board::Space.new('A'), JoshuaSonOfNun::Board::Space.new('A')]
+      [Space('A8'), Space('A9'), Space('A10'), nil, nil]
   end
   
   it "should calculate whether it can accomodate a ship at a certain space" do
