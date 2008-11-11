@@ -3,6 +3,10 @@ module JoshuaSonOfNun
     ROWS = Board::ROWS
     COLUMNS = Board::COLUMNS
     
+    def self.directions
+      [:southeast, :southwest, :northeast, :northwest]
+    end
+    
     def self.generate
       new(ROWS[rand(10).to_i], COLUMNS[rand(10).to_i], %w(horizontal vertical)[rand(2)])
     end
@@ -50,6 +54,30 @@ module JoshuaSonOfNun
     
     def row_index
       ROWS.index(row)
+    end
+    
+    def spaces_on_diagonal(direction)
+      spaces, boundary_reached = [], false
+      until boundary_reached
+        case direction
+        when :northeast: row_offset, column_offset = -1, 1
+        when :southeast: row_offset, column_offset = 1, 1
+        when :southwest: row_offset, column_offset = 1, -1
+        when :northwest: row_offset, column_offset = -1, -1
+        end
+        
+        seed_space = spaces.last || self
+        row_index, column_index = seed_space.row_index + row_offset, seed_space.column_index + column_offset
+        
+        if row_index < 0 || column_index < 0 || row_index > 9 || column_index > 9
+          boundary_reached = true
+        else
+          row, column = ROWS[row_index], COLUMNS[column_index]
+          spaces << self.class.new(row, column)
+        end
+      end
+      
+      spaces
     end
     
     def to_s

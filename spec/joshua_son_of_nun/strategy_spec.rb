@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe JoshuaSonOfNun::Strategy::Random do
   before do
@@ -7,7 +7,7 @@ describe JoshuaSonOfNun::Strategy::Random do
   end
   
   it "should target all spaces" do
-    (@model.targets & @board.valid_spaces).size.should == 100
+    @model.targets.size.should == 100
   end
   
   it "should shift targets out of the array to gather targets" do
@@ -55,5 +55,25 @@ describe JoshuaSonOfNun::Strategy::Random do
     
     @model.targets.size.should == targets.size
     @model.targets.should == targets
+  end
+end
+
+describe JoshuaSonOfNun::Strategy::Diagonal do
+  before do
+    @board = JoshuaSonOfNun::Board.new
+    @model = JoshuaSonOfNun::Strategy::Diagonal.new(@board)
+  end
+  
+  it "should target all spaces" do
+    @model.targets.size.should == 100
+  end
+  
+  it "should search across the board in a diagonal fashion" do
+    JoshuaSonOfNun::Space.stub!(:directions).and_return([:southeast])
+    @model = JoshuaSonOfNun::Strategy::Diagonal.new(@board)
+    
+    first_target = @model.targets.first
+    diagonal_targets = first_target.spaces_on_diagonal(:southeast)
+    @model.targets[1].should == diagonal_targets[0] unless diagonal_targets.empty?
   end
 end

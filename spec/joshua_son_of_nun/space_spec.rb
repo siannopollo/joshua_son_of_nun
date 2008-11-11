@@ -23,6 +23,14 @@ describe JoshuaSonOfNun::Space do
     Space('E5').crosswise_spaces.should == [Space('D5'), Space('E6'), Space('F5'), Space('E4')]
   end
   
+  it "should know which spaces are in the diagonal of a given direction" do
+    @model = Space('E5')
+    @model.spaces_on_diagonal(:northeast).should == ['D6', 'C7', 'B8', 'A9'].collect {|s| Space(s)}
+    @model.spaces_on_diagonal(:southeast).should == ['F6', 'G7', 'H8', 'I9', 'J10'].collect {|s| Space(s)}
+    @model.spaces_on_diagonal(:southwest).should == ['F4', 'G3', 'H2', 'I1'].collect {|s| Space(s)}
+    @model.spaces_on_diagonal(:northwest).should == ['D4', 'C3', 'B2', 'A1'].collect {|s| Space(s)}
+  end
+  
   it "should work as expected in an array" do
     pending
     array_one = ['A1', 'B2', 'C3'].collect {|s| Space(s)}

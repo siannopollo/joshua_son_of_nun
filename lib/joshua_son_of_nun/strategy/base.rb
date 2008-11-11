@@ -1,7 +1,7 @@
 module JoshuaSonOfNun
   module Strategy
     def self.strategies
-      ['Random']
+      ['Random', 'Diagonal']
     end
     
     def self.select(board)
@@ -26,6 +26,11 @@ module JoshuaSonOfNun
       def register_result!(ship_hit, ship_sunk)
         @targets, @old_targets = TargetingReaction.new(self, ship_sunk).react! if ship_hit
       end
+      
+      private
+        def possible_targets
+          @possible_targets ||= @board.valid_spaces.dup
+        end
     end
     
     class TargetingReaction
