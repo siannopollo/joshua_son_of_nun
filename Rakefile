@@ -9,6 +9,7 @@ Spec::Rake::SpecTask.new('spec') do |t|
   t.spec_opts = ['--options', 'spec/spec.opts']
   t.rcov = false
 end
+task :default => :spec
 
 PKG_NAME = "joshua_son_of_nun"
 PKG_VERSION   = "1.0"

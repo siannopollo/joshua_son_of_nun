@@ -11,28 +11,27 @@ describe JoshuaSonOfNun::Board do
   end
   
   it "should know about which spaces are valid" do
-    @model.valid_spaces.should include('A1')
-    @model.valid_spaces.should include('A10')
-    @model.valid_spaces.should_not include('A11')
-  end
-  
-  it "should be able to convert numeric coordinates to board coordinates" do
-    @model.coordinates(1,1).should == 'A1'
-    @model.coordinates(3,4).should == 'D3'
-    @model.coordinates(10,10).should == 'J10'
+    @model.valid_spaces.should include(Space('A1'))
+    @model.valid_spaces.should include(Space('A10'))
+    @model.valid_spaces.should_not include(Space('A11'))
   end
   
   it "should return the spaces for placement for a ship of given length" do
-    @model.spaces_for_placement('A1 horizontal', 4).should == ['A1', 'A2', 'A3', 'A4']
-    @model.spaces_for_placement('A1 vertical', 5).should == ['A1', 'B1', 'C1', 'D1', 'E1']
-    @model.spaces_for_placement('A8 horizontal', 5).should == ['A8', 'A9', 'A10', 'A', 'A']
+    @model.spaces_for_placement(Space('A1 horizontal'), 4).should ==
+      [Space('A1'), Space('A2'), Space('A3'), Space('A4')]
+    
+    @model.spaces_for_placement(Space('A1 vertical'), 5).should ==
+      [Space('A1'), Space('B1'), Space('C1'), Space('D1'), Space('E1')]
+    
+    @model.spaces_for_placement(Space('A8 horizontal'), 5).should ==
+      [Space('A8'), Space('A9'), Space('A10'), JoshuaSonOfNun::Board::Space.new('A'), JoshuaSonOfNun::Board::Space.new('A')]
   end
   
   it "should calculate whether it can accomodate a ship at a certain space" do
-    @model.accomodate?('A1 horizontal', 5).should be_true
-    @model.accomodate?('A10 horizontal', 5).should be_false
-    @model.accomodate?('H1 vertical', 3).should be_true
-    @model.accomodate?('H1 vertical', 4).should be_false
+    @model.accomodate?(Space('A1 horizontal'), 5).should be_true
+    @model.accomodate?(Space('A10 horizontal'), 5).should be_false
+    @model.accomodate?(Space('H1 vertical'), 3).should be_true
+    @model.accomodate?(Space('H1 vertical'), 4).should be_false
   end
   
   it "should keep track of it's occupied spaces" do
@@ -41,5 +40,21 @@ describe JoshuaSonOfNun::Board do
     
     @model.placement(5)
     @model.occupied_spaces.size.should == 9
+  end
+  
+  it "should be able to tell if a space is adjacent to the occupied spaces" do
+    space = Space('D3 horizontal')
+    @model.occupied_spaces.concat(@model.spaces_for_placement(space, 5)) # D3, D4, D5, D6, D7
+    
+    @model.adjacent_to_occupied_spaces?(Space('C3 horizontal'), 5).should be_true
+    @model.adjacent_to_occupied_spaces?(Space('E3 horizontal'), 5).should be_true
+    @model.adjacent_to_occupied_spaces?(Space('E3 vertical'), 2).should be_true
+    @model.adjacent_to_occupied_spaces?(Space('C8 vertical'), 2).should be_true
+    @model.adjacent_to_occupied_spaces?(Space('E2 vertical'), 2).should be_true
+    
+    @model.adjacent_to_occupied_spaces?(Space('A1 horizontal'), 5).should be_false
+    @model.adjacent_to_occupied_spaces?(Space('A1 vertical'), 5).should be_false
+    @model.adjacent_to_occupied_spaces?(Space('A4 vertical'), 2).should be_false
+    @model.adjacent_to_occupied_spaces?(Space('C9 vertical'), 5).should be_false
   end
 end

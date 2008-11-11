@@ -12,7 +12,7 @@ module JoshuaSonOfNun
   # Once the ships are placed, play proceeeds by each player targeting one square on their opponents map.  A player
   # may only target one square, reguardless of whether it resulted in a hit or not, before changing turns with her opponent.
   #
-  class JoshuaSonOfNun
+  class Player
     attr_reader :personal_board, :opponent_board, :opponent
     attr_reader :carrier, :battleship, :destroyer, :submarine, :patrolship
     

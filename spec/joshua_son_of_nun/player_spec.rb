@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
 
-describe JoshuaSonOfNun::JoshuaSonOfNun do
+describe JoshuaSonOfNun::Player do
   before do
-    @model = JoshuaSonOfNun::JoshuaSonOfNun.new
+    @model = JoshuaSonOfNun::Player.new
   end
   
   it "should know about it's ships" do
