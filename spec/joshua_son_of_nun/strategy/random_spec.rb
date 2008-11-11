@@ -21,14 +21,14 @@ describe JoshuaSonOfNun::Strategy::Random do
   end
   
   it "should receive results of the current target, and react accordingly" do
-    pending
     target = @model.targets.delete(Space('E5'))
-    targets = @model.targets
+    targets = @model.targets.dup
     @model.instance_variable_set '@current_target', target
     @model.register_result! true, false
     
     @model.targets.size.should == 99
     @model.targets.should_not == targets
+    @model.old_targets.should == targets
     @model.targets[0..3].should == [Space('D5'), Space('E6'), Space('F5'), Space('E4')]
   end
   
@@ -41,5 +41,18 @@ describe JoshuaSonOfNun::Strategy::Random do
     @model.targets.should == targets
   end
   
-  it "should restore the old target array minus the shots taken if the ship was sunk"
+  it "should restore the old target array minus the shots taken if the ship was sunk" do
+    target = @model.targets.delete(Space('E5'))
+    targets = @model.targets.dup
+    @model.instance_variable_set '@current_target', target
+    @model.instance_variable_get('@expended_targets') << target
+    @model.register_result! true, false
+    
+    sinking_target = @model.next_target
+    @model.register_result! true, true
+    targets.delete(sinking_target) # get old target array in the proper state
+    
+    @model.targets.size.should == targets.size
+    @model.targets.should == targets
+  end
 end

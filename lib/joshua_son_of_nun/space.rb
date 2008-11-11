@@ -55,6 +55,7 @@ module JoshuaSonOfNun
     def to_s
       [row.to_s + column.to_s, orientation].compact * ' '
     end
+    alias_method :inspect, :to_s
     
     def ==(other)
       to_s == other.to_s
