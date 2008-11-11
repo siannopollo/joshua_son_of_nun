@@ -22,4 +22,12 @@ describe JoshuaSonOfNun::Space do
     Space('C10').crosswise_spaces.should == [Space('B10'), Space('D10'), Space('C9')]
     Space('E5').crosswise_spaces.should == [Space('D5'), Space('E6'), Space('F5'), Space('E4')]
   end
+  
+  it "should work as expected in an array" do
+    pending
+    array_one = ['A1', 'B2', 'C3'].collect {|s| Space(s)}
+    array_two = ['A1', 'C3'].collect {|s| Space(s)}
+    (array_one - array_two).should == [Space('B2')]
+    (array_one & array_two).should == [Space('A1'), Space('C3')]
+  end
 end

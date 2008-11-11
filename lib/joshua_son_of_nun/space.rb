@@ -57,8 +57,20 @@ module JoshuaSonOfNun
     end
     alias_method :inspect, :to_s
     
+    def ===(klass)
+      self.is_a?(klass)
+    end
+    
     def ==(other)
       to_s == other.to_s
+    end
+    
+    def eql?(other)
+      self == other
+    end
+    
+    def equal?(other)
+      self.eql?(other) && other === self.class
     end
   end
 end

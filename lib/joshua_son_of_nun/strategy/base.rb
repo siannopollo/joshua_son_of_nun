@@ -44,6 +44,7 @@ module JoshuaSonOfNun
         else
           targets, old_targets = strategy.targets.dup, strategy.targets.dup
           new_immediate_targets = strategy.current_target.crosswise_spaces
+          strategy.expended_targets.each {|target| new_immediate_targets.delete(target)}
           new_immediate_targets.each {|target| targets.delete(target)}
           new_immediate_targets.reverse.each {|target| targets.unshift(target)}
           

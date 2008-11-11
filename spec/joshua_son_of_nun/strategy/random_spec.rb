@@ -24,6 +24,7 @@ describe JoshuaSonOfNun::Strategy::Random do
     target = @model.targets.delete(Space('E5'))
     targets = @model.targets.dup
     @model.instance_variable_set '@current_target', target
+    @model.instance_variable_get('@expended_targets') << target
     @model.register_result! true, false
     
     @model.targets.size.should == 99
