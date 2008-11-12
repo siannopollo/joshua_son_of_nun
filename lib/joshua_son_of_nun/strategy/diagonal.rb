@@ -14,14 +14,6 @@ module JoshuaSonOfNun
           end
           targets.compact
         end
-        
-        def choose_target
-          possible_targets.delete(possible_targets[rand(possible_targets.size)])
-        end
-        
-        def random_direction
-          Space.directions[rand(Space.directions.size)]
-        end
     end
   end
 end

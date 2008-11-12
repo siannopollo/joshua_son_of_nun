@@ -7,7 +7,7 @@ describe JoshuaSonOfNun::Strategy::Random do
   end
   
   it "should target all spaces" do
-    @model.targets.size.should == 100
+    @model.targets.uniq.size.should == 100
   end
   
   it "should shift targets out of the array to gather targets" do
@@ -67,7 +67,7 @@ describe JoshuaSonOfNun::Strategy::Diagonal do
   end
   
   it "should target all spaces" do
-    @model.targets.size.should == 100
+    @model.targets.uniq.size.should == 100
   end
   
   it "should search across the board in a diagonal fashion" do
@@ -78,24 +78,20 @@ end
 
 describe JoshuaSonOfNun::Strategy::Knight do
   before do
+    JoshuaSonOfNun::Space.stub!(:directions).and_return([:southeast])
+    
     @board = JoshuaSonOfNun::Board.new
     @model = JoshuaSonOfNun::Strategy::Knight.new(@board)
   end
   
   it "should target all spaces" do
-    @model.targets.size.should == 100
+    @model.targets.uniq.size.should == 100
+    # The specifics of this strategy are not tested here because the next move
+    # from space E5 may have already been placed in the targeting array,
+    # making the order very difficult to test since sometimes the test will
+    # pass, other times the test will fail. So, testing whether or not we have
+    # all the targets is good enough.
+    # 
+    # Also, moving like a knight is tested in the space_spec
   end
-  
-  it "should search across the board like a knight in chess" do
-    
-  end
-  # 
-  # it "should search across the board in a diagonal fashion" do
-  #   JoshuaSonOfNun::Space.stub!(:directions).and_return([:southeast])
-  #   @model = JoshuaSonOfNun::Strategy::Diagonal.new(@board)
-  #   
-  #   first_target = @model.targets.first
-  #   diagonal_targets = first_target.spaces_on_diagonal(:southeast)
-  #   @model.targets[1].should == diagonal_targets[0] unless diagonal_targets.empty?
-  # end
 end

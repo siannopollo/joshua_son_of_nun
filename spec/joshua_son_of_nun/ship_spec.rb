@@ -12,6 +12,6 @@ describe "Ships" do
   
   it "should have an initial placement on the board" do
     @model.initial_placement.should_not be_nil
-    @model.initial_placement.should =~ /[A-Z][0-9] [horizontal|vertical]/
+    @model.initial_placement.should =~ /[A-Z]\d{1,2} [horizontal|vertical]/
   end
 end

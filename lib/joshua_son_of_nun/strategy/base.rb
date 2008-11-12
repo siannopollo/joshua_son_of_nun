@@ -1,7 +1,7 @@
 module JoshuaSonOfNun
   module Strategy
     def self.strategies
-      ['Random', 'Diagonal']
+      ['Random', 'Diagonal', 'Knight']
     end
     
     def self.select(board)
@@ -28,8 +28,16 @@ module JoshuaSonOfNun
       end
       
       private
+        def choose_target(index = rand(possible_targets.size))
+          possible_targets.delete(possible_targets[index])
+        end
+        
         def possible_targets
           @possible_targets ||= @board.valid_spaces.dup
+        end
+        
+        def random_direction
+          Space.directions[rand(Space.directions.size)]
         end
     end
     

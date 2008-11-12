@@ -6,7 +6,7 @@ module JoshuaSonOfNun
           targets = []
           possible_targets.size.times do |n|
             i = 100 - n
-            targets << possible_targets.delete(possible_targets[rand(i)])
+            targets << choose_target(rand(i))
           end
           targets
         end

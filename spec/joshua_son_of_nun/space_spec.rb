@@ -31,6 +31,19 @@ describe JoshuaSonOfNun::Space do
     @model.spaces_on_diagonal(:northwest).should == ['D4', 'C3', 'B2', 'A1'].collect {|s| Space(s)}
   end
   
+  it "should know which spaces are in an 'L' shape to the given square and direction" do
+    @model.spaces_in_knighted_move(:northeast).should be_nil
+    [Space('C2'), Space('B3')].should include(@model.spaces_in_knighted_move(:southeast))
+    @model.spaces_in_knighted_move(:southwest).should be_nil
+    @model.spaces_in_knighted_move(:northwest).should be_nil
+    
+    @model = Space('E5')
+    [Space('C6'), Space('D7')].should include(@model.spaces_in_knighted_move(:northeast))
+    [Space('G6'), Space('F7')].should include(@model.spaces_in_knighted_move(:southeast))
+    [Space('F3'), Space('G4')].should include(@model.spaces_in_knighted_move(:southwest))
+    [Space('D3'), Space('C4')].should include(@model.spaces_in_knighted_move(:northwest))
+  end
+  
   it "should work as expected in an array" do
     pending
     array_one = ['A1', 'B2', 'C3'].collect {|s| Space(s)}

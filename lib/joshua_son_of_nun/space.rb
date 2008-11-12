@@ -56,23 +56,40 @@ module JoshuaSonOfNun
       ROWS.index(row)
     end
     
+    def spaces_in_knighted_move(direction)
+      row_offset, column_offset = case direction
+      when :northeast: [[-1, 2], [-2, 1]][rand(2)]
+      when :southeast: [[1, 2], [2, 1]][rand(2)]
+      when :southwest: [[1, -2], [2, -1]][rand(2)]
+      when :northwest: [[-1, -2], [-2, -1]][rand(2)]
+      end
+      
+      r_index, c_index = row_index + row_offset, column_index + column_offset
+      if r_index < 0 || c_index < 0 || r_index > 9 || c_index > 9
+        nil
+      else
+        row, column = ROWS[r_index], COLUMNS[c_index]
+        self.class.new(row, column)
+      end
+    end
+    
     def spaces_on_diagonal(direction)
       spaces, boundary_reached = [], false
       until boundary_reached
-        case direction
-        when :northeast: row_offset, column_offset = -1, 1
-        when :southeast: row_offset, column_offset = 1, 1
-        when :southwest: row_offset, column_offset = 1, -1
-        when :northwest: row_offset, column_offset = -1, -1
+        row_offset, column_offset = case direction
+        when :northeast: [-1, 1]
+        when :southeast: [1, 1]
+        when :southwest: [1, -1]
+        when :northwest: [-1, -1]
         end
         
         seed_space = spaces.last || self
-        row_index, column_index = seed_space.row_index + row_offset, seed_space.column_index + column_offset
+        r_index, c_index = seed_space.row_index + row_offset, seed_space.column_index + column_offset
         
-        if row_index < 0 || column_index < 0 || row_index > 9 || column_index > 9
+        if r_index < 0 || c_index < 0 || r_index > 9 || c_index > 9
           boundary_reached = true
         else
-          row, column = ROWS[row_index], COLUMNS[column_index]
+          row, column = ROWS[r_index], COLUMNS[c_index]
           spaces << self.class.new(row, column)
         end
       end

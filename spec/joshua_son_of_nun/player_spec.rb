@@ -17,4 +17,10 @@ describe JoshuaSonOfNun::Player do
     @model.personal_board.should_not be_nil
     @model.opponent_board.should_not be_nil
   end
+  
+  it "should always provide a valid target" do
+    100.times do
+      @model.next_target.should_not == ''
+    end
+  end
 end
