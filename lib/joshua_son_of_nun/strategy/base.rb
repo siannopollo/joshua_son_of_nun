@@ -44,8 +44,8 @@ module JoshuaSonOfNun
       
       def react!
         if ship_sunk?
-          strategy.expended_targets.each {|target| strategy.old_targets.delete(target)}
-          [strategy.old_targets, nil]
+          strategy.expended_targets.each {|target| strategy.old_targets.delete(target)} unless strategy.old_targets.nil?
+          [strategy.old_targets || strategy.targets, nil]
         else
           targets, old_targets = strategy.targets.dup, strategy.targets.dup
           new_immediate_targets = strategy.current_target.crosswise_spaces

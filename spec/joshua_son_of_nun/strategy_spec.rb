@@ -60,6 +60,8 @@ end
 
 describe JoshuaSonOfNun::Strategy::Diagonal do
   before do
+    JoshuaSonOfNun::Space.stub!(:directions).and_return([:southeast])
+    
     @board = JoshuaSonOfNun::Board.new
     @model = JoshuaSonOfNun::Strategy::Diagonal.new(@board)
   end
@@ -69,11 +71,31 @@ describe JoshuaSonOfNun::Strategy::Diagonal do
   end
   
   it "should search across the board in a diagonal fashion" do
-    JoshuaSonOfNun::Space.stub!(:directions).and_return([:southeast])
-    @model = JoshuaSonOfNun::Strategy::Diagonal.new(@board)
-    
-    first_target = @model.targets.first
-    diagonal_targets = first_target.spaces_on_diagonal(:southeast)
-    @model.targets[1].should == diagonal_targets[0] unless diagonal_targets.empty?
+    target = @model.targets.find {|t| t == Space('E5')}
+    @model.targets[@model.targets.index(target) + 1].should == Space('F6')
   end
+end
+
+describe JoshuaSonOfNun::Strategy::Knight do
+  before do
+    @board = JoshuaSonOfNun::Board.new
+    @model = JoshuaSonOfNun::Strategy::Knight.new(@board)
+  end
+  
+  it "should target all spaces" do
+    @model.targets.size.should == 100
+  end
+  
+  it "should search across the board like a knight in chess" do
+    
+  end
+  # 
+  # it "should search across the board in a diagonal fashion" do
+  #   JoshuaSonOfNun::Space.stub!(:directions).and_return([:southeast])
+  #   @model = JoshuaSonOfNun::Strategy::Diagonal.new(@board)
+  #   
+  #   first_target = @model.targets.first
+  #   diagonal_targets = first_target.spaces_on_diagonal(:southeast)
+  #   @model.targets[1].should == diagonal_targets[0] unless diagonal_targets.empty?
+  # end
 end
