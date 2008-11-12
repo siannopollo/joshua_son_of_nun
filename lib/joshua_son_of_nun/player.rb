@@ -51,38 +51,10 @@ module JoshuaSonOfNun
       submarine.initial_placement
     end
     
-    # Returns the coordinates of the players next target.  This method will be called once per turn.  The player
-    # should return target coordinates as a string in the form of:
-    #
-    #   "#{ROW}#{COL}"
-    #
-    # eg
-    #
-    #   A1 # the square in Row A and Column 1
-    #   F5 # the square in Row F and Column 5
-    #
-    # Since the map contains only 10 rows and 10 columns, the ROW should be A, B, C, D, E, F, G H, I, or J. And the
-    # COL should be 1, 2, 3, 4, 5, 6, 7, 8, 9, or 10
-    #
-    # Returning coordinates outside the range or in an invalid format will result in the players disqualification.
-    #
-    # It is illegal to illegal to target a sector more than once.  Doing so will also result in disqualification.
-    #
     def next_target
       strategy.next_target.to_s
     end
     
-    # target_result will be called by the system after a call to next_target.  The paramters supplied inform the player
-    # of the results of the target.
-    #
-    #   coordinates : string. The coordinates targeted.  It will be the same value returned by the previous call to next_target
-    #   was_hit     : boolean.  true if the target was occupied by a ship.  false otherwise.
-    #   ship_sunk   : symbol.  nil if the target did not result in the sinking of a ship.  If the target did result in
-    #     in the sinking of a ship, the ship type is supplied (:carrier, :battleship, :destroyer, :submarine, :patrolship).
-    #
-    # An intelligent player will use the information to better play the game.  For example, if the result indicates a
-    # hit, a player my choose to target neighboring squares to hit and sink the remainder of the ship.
-    #
     def target_result(coordinates, was_hit, ship_sunk)
       strategy.register_result! was_hit, ship_sunk
     end

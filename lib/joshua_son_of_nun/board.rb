@@ -45,10 +45,10 @@ module JoshuaSonOfNun
     
     def spaces_for_placement(space, ship_length)
       if space.orientation == 'horizontal'
-        index = COLUMNS.index(space.column) || COLUMNS.size
+        index = space.column_index || COLUMNS.size
         (0..(ship_length - 1)).collect {|i| Space.new(space.row, COLUMNS[index + i].to_s) rescue nil}
       else
-        index = ROWS.index(space.row) || ROWS.size
+        index = space.row_index || ROWS.size
         (0..(ship_length - 1)).collect {|i| Space.new(ROWS[index + i].to_s, space.column) rescue nil}
       end
     end
