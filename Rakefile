@@ -47,3 +47,8 @@ task :submit do
   submitter = BattleshipTournament::Submit.new(PKG_NAME)
   submitter.submit
 end
+
+desc 'Locally build the gem'
+task :make_gem do
+  `cd #{File.expand_path(File.dirname(__FILE__))} && rm -f pkg/joshua_son_of_nun-1.0.gem && rake gem && sudo gem uninstall joshua_son_of_nun && sudo gem install pkg/joshua_son_of_nun-1.0.gem`
+end
