@@ -22,39 +22,48 @@ describe JoshuaSonOfNun::Strategy::Random do
   
   it "should receive results of the current target, and react accordingly" do
     target = @model.targets.delete(Space('E5'))
-    targets = @model.targets.dup
     @model.instance_variable_set '@current_target', target
-    @model.instance_variable_get('@expended_targets') << target
     @model.register_result! true, false
     
-    @model.targets.size.should == 99
-    @model.targets.should_not == targets
-    @model.old_targets.should == targets
-    @model.targets[0..3].should == [Space('D5'), Space('E6'), Space('F5'), Space('E4')]
+    @model.next_target.should == Space('D5') # First crosswise space to attack
+    @model.next_target.should == Space('E6')
+    @model.next_target.should == Space('F5')
+    @model.next_target.should == Space('E4')
   end
   
   it "should not target differently if nothing was hit" do
     target = @model.targets.delete(Space('E5'))
-    targets = @model.targets
     @model.instance_variable_set '@current_target', target
+    next_target = @model.targets.first
     @model.register_result! false, false
     
-    @model.targets.should == targets
+    @model.next_target.should == next_target
   end
   
-  it "should restore the old target array minus the shots taken if the ship was sunk" do
-    target = @model.targets.delete(Space('E5'))
-    targets = @model.targets.dup
-    @model.instance_variable_set '@current_target', target
-    @model.instance_variable_get('@expended_targets') << target
+  it "should target in a line if two or more targets have been hit" do
+    @model.instance_variable_set '@immediate_targets', [Space('E5')]
+    @model.next_target; @model.register_result! true, false # first shot
+    
+    @model.instance_variable_set '@immediate_targets', [Space('E6')]
+    @model.next_target; @model.register_result! true, false # second shot
+    
+    @model.next_target.should == Space('E4')
+    @model.register_result! false, false
+    
+    @model.next_target.should == Space('E7')
     @model.register_result! true, false
     
-    sinking_target = @model.next_target
-    @model.register_result! true, true
-    targets.delete(sinking_target) # get old target array in the proper state
+    @model.next_target.should == Space('E3')
+  end
+  
+  it "should track successful targets" do
+    target_one = @model.next_target
+    @model.register_result! true, false
     
-    @model.targets.size.should == targets.size
-    @model.targets.should == targets
+    target_two = @model.next_target
+    @model.register_result! true, false
+    
+    @model.successful_targets.should == [target_one, target_two]
   end
 end
 
@@ -71,8 +80,14 @@ describe JoshuaSonOfNun::Strategy::Diagonal do
   end
   
   it "should search across the board in a diagonal fashion" do
-    target = @model.targets.find {|t| t == Space('E5')}
-    @model.targets[@model.targets.index(target) + 1].should == Space('F6')
+    target = Space('E5')
+    expected_next_target = Space('F6')
+    
+    if @model.targets.index(target) < @model.targets.index(expected_next_target)
+      @model.targets[@model.targets.index(target) + 1].should == expected_next_target
+    else
+      @model.targets[@model.targets.index(expected_next_target) + 1].should == Space('G7')
+    end
   end
 end
 

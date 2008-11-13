@@ -52,6 +52,52 @@ module JoshuaSonOfNun
       [top, right, bottom, left].compact
     end
     
+    def linear_spaces(other, illegal_spaces = [])
+      top, left, bottom, right = nil
+      
+      if row_index == other.row_index
+        left_column_index = (column_index < other.column_index ? column_index : other.column_index)
+        right_column_index = left_column_index + 1
+        
+        unless left_column_index == 0
+          while left.nil? || illegal_spaces.include?(left)
+            left_column_index -= 1
+            left = self.class.new(row, COLUMNS[left_column_index])
+          end
+        end
+        
+        unless right_column_index >= 8
+          while right.nil? || illegal_spaces.include?(right)
+            right_column_index += 1
+            right = self.class.new(row, COLUMNS[right_column_index])
+          end
+        end
+      elsif column_index == other.column_index
+        top_row_index = (row_index < other.row_index ? row_index : other.row_index)
+        bottom_row_index = top_row_index + 1
+        
+        unless top_row_index == 0
+          while top.nil? || illegal_spaces.include?(top)
+            top_row_index -= 1
+            top = self.class.new(ROWS[top_row_index], column)
+          end
+        end
+        
+        unless bottom_row_index >= 8
+          while bottom.nil? || illegal_spaces.include?(bottom)
+            bottom_row_index += 1
+            bottom = self.class.new(ROWS[bottom_row_index], column)
+          end
+        end
+      end
+      
+      [top, left, bottom, right].compact
+    end
+    
+    def linear_to?(other)
+      row_index == other.row_index || column_index == other.column_index
+    end
+    
     def row_index
       ROWS.index(row)
     end

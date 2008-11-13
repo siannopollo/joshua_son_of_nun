@@ -44,6 +44,17 @@ describe JoshuaSonOfNun::Space do
     [Space('D3'), Space('C4')].should include(@model.spaces_in_knighted_move(:northwest))
   end
   
+  it "should know which spaces are linear to two given spaces, and return the two immediate closest spaces" do
+    Space('E6').linear_spaces(Space('E5')).should == [Space('E4'), Space('E7')]
+    Space('E5').linear_spaces(Space('D5')).should == [Space('C5'), Space('F5')]
+    @model.linear_spaces(Space('A2')).should == ['A3']
+    @model.linear_spaces(Space('B1')).should == ['C1']
+    
+    Space('E6').linear_spaces(Space('E5'), [Space('E4')]).should == [Space('E3'), Space('E7')]
+    Space('E5').linear_spaces(Space('D5'), [Space('C5')]).should == [Space('B5'), Space('F5')]
+    Space('D1').linear_spaces(Space('B1'), [Space('A1'), Space('B1'), Space('C1'), Space('D1')]).should == ['E1']
+  end
+  
   it "should work as expected in an array" do
     pending
     array_one = ['A1', 'B2', 'C3'].collect {|s| Space(s)}

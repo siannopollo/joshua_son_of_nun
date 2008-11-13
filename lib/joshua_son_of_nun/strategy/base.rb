@@ -9,22 +9,33 @@ module JoshuaSonOfNun
     end
     
     class Base
-      attr_reader :board, :current_target, :expended_targets, :old_targets, :targets
+      attr_accessor :successful_targets
+      attr_reader :board, :current_target, :expended_targets, :immediate_targets, :targets
       
       def initialize(board)
         @board = board
         @targets = assign_targets
-        @expended_targets = []
+        @expended_targets, @successful_targets, @immediate_targets = [], [], []
       end
       
       def next_target
-        @current_target = @targets.shift
-        expended_targets << @current_target
+        new_target = @immediate_targets.shift
+        unless new_target.nil?
+          @targets.delete(new_target)
+        else
+          new_target = @targets.shift
+        end
+        
+        @current_target = new_target
+        @expended_targets << @current_target
         @current_target
       end
       
       def register_result!(ship_hit, ship_sunk)
-        @targets, @old_targets = TargetingReaction.new(self, ship_sunk).react! if ship_hit
+        if ship_hit
+          @successful_targets << @current_target
+          @immediate_targets = TargetingReaction.new(self, ship_sunk).react!
+        end
       end
       
       private
@@ -51,19 +62,26 @@ module JoshuaSonOfNun
       end
       
       def react!
-        if ship_sunk?
-          strategy.expended_targets.each {|target| strategy.old_targets.delete(target)} unless strategy.old_targets.nil?
-          [strategy.old_targets || strategy.targets, nil]
+        return [] if ship_sunk?
+        
+        if targets_lined_up?
+          reject_expended(strategy.successful_targets[-2].linear_spaces(strategy.successful_targets.last, strategy.expended_targets))
         else
-          targets, old_targets = strategy.targets.dup, strategy.targets.dup
-          new_immediate_targets = strategy.current_target.crosswise_spaces
-          strategy.expended_targets.each {|target| new_immediate_targets.delete(target)}
-          new_immediate_targets.each {|target| targets.delete(target)}
-          new_immediate_targets.reverse.each {|target| targets.unshift(target)}
-          
-          [targets, old_targets]
+          reject_expended(strategy.current_target.crosswise_spaces)
         end
       end
+      
+      protected
+        def reject_expended(spaces)
+          spaces.reject do |space|
+            strategy.expended_targets.include?(space)
+          end
+        end
+        
+        def targets_lined_up?
+          targets = strategy.successful_targets
+          targets.size > 1 && targets[-2].linear_to?(targets.last)
+        end
     end
   end
 end
