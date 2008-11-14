@@ -83,7 +83,6 @@ module JoshuaSonOfNun
       ROWS.index(row)
     end
     
-    
     def spaces_for_placement(ship_length)
       if orientation == 'horizontal'
         index = column_index || COLUMNS.size
@@ -93,7 +92,6 @@ module JoshuaSonOfNun
         (0..(ship_length - 1)).collect {|i| Space.new(ROWS[index + i].to_s, column) rescue nil}
       end
     end
-    
     
     def spaces_in_knighted_move(direction)
       row_offset, column_offset = case direction
