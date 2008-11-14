@@ -65,7 +65,8 @@ module JoshuaSonOfNun
         return [] if ship_sunk?
         
         if targets_lined_up?
-          reject_expended(strategy.successful_targets[-2].linear_spaces(strategy.successful_targets.last, strategy.expended_targets))
+          targets = strategy.successful_targets
+          reject_expended(targets[-2].linear_spaces(targets.last, strategy.expended_targets))
         else
           reject_expended(strategy.current_target.crosswise_spaces)
         end

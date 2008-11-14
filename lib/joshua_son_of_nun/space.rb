@@ -54,40 +54,21 @@ module JoshuaSonOfNun
     
     def linear_spaces(other, illegal_spaces = [])
       top, left, bottom, right = nil
+      illegal_spaces = illegal_spaces.dup.concat([self, other]).uniq
       
       if row_index == other.row_index
-        left_column_index = (column_index < other.column_index ? column_index : other.column_index)
-        right_column_index = left_column_index + 1
+        left_index = (column_index < other.column_index ? column_index : other.column_index)
+        right_index = left_index + 1
         
-        unless left_column_index == 0
-          while left.nil? || illegal_spaces.include?(left)
-            left_column_index -= 1
-            left = self.class.new(row, COLUMNS[left_column_index])
-          end
-        end
-        
-        unless right_column_index >= 8
-          while right.nil? || illegal_spaces.include?(right)
-            right_column_index += 1
-            right = self.class.new(row, COLUMNS[right_column_index])
-          end
+        left, right = surrounding_linear_spaces(left_index, right_index, illegal_spaces) do |i, row, column|
+          Space.new(row, COLUMNS[i])
         end
       elsif column_index == other.column_index
-        top_row_index = (row_index < other.row_index ? row_index : other.row_index)
-        bottom_row_index = top_row_index + 1
+        top_index = (row_index < other.row_index ? row_index : other.row_index)
+        bottom_index = top_index + 1
         
-        unless top_row_index == 0
-          while top.nil? || illegal_spaces.include?(top)
-            top_row_index -= 1
-            top = self.class.new(ROWS[top_row_index], column)
-          end
-        end
-        
-        unless bottom_row_index >= 8
-          while bottom.nil? || illegal_spaces.include?(bottom)
-            bottom_row_index += 1
-            bottom = self.class.new(ROWS[bottom_row_index], column)
-          end
+        top, bottom = surrounding_linear_spaces(top_index, bottom_index, illegal_spaces) do |i, row, column|
+          Space.new(ROWS[i], column)
         end
       end
       
@@ -148,20 +129,21 @@ module JoshuaSonOfNun
     end
     alias_method :inspect, :to_s
     
-    def ===(klass)
-      self.is_a?(klass)
-    end
-    
     def ==(other)
       to_s == other.to_s
     end
     
-    def eql?(other)
-      self == other
-    end
-    
-    def equal?(other)
-      self.eql?(other) && other === self.class
-    end
+    private
+      def surrounding_linear_spaces(side_one_index, side_two_index, illegal_spaces, &space_creation_block)
+        side_one_spaces  = (0..side_one_index).collect {|i| space_creation_block.call(i, row, column)}
+        side_two_spaces = (side_two_index..9).collect {|i| space_creation_block.call(i, row, column)}
+        
+        illegal_spaces.each do |space|
+          side_one_spaces.delete(space)
+          side_two_spaces.delete(space)
+        end
+        
+        [side_one_spaces.pop, side_two_spaces.shift]
+      end
   end
 end
