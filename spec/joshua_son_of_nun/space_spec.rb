@@ -17,6 +17,17 @@ describe JoshuaSonOfNun::Space do
     Space('H7').adjacent?(Space('J7')).should be_false
   end
   
+  it "should return the spaces for placement for a ship of given length" do
+    Space('A1 horizontal').spaces_for_placement(4).should ==
+      [Space('A1'), Space('A2'), Space('A3'), Space('A4')]
+    
+    Space('A1 vertical').spaces_for_placement(5).should ==
+      [Space('A1'), Space('B1'), Space('C1'), Space('D1'), Space('E1')]
+    
+    Space('A8 horizontal').spaces_for_placement(5).should ==
+      [Space('A8'), Space('A9'), Space('A10'), nil, nil]
+  end
+  
   it "should know which spaces are crosswise to the given space" do
     @model.crosswise_spaces.should == [Space('A2'), Space('B1')]
     Space('C10').crosswise_spaces.should == [Space('B10'), Space('D10'), Space('C9')]

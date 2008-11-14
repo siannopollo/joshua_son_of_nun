@@ -1,17 +1,4 @@
 module JoshuaSonOfNun
-  # Battleship Player
-  #
-  # Battleship is board game between two players.  See http://en.wikipedia.org/wiki/Battleship for more information and
-  # game rules.
-  #
-  # A player represents the computer AI to play a game of Battleship.  It should know how to place ships and target
-  # the opponents ships.
-  #
-  # This version of Battleship is played on a 10 x 10 grid where rows are labled by the letters A - J and
-  # columns are labled by the numbers 1 - 10.  At the start of the game, each player will be asked for ship placements.
-  # Once the ships are placed, play proceeeds by each player targeting one square on their opponents map.  A player
-  # may only target one square, reguardless of whether it resulted in a hit or not, before changing turns with her opponent.
-  #
   class Player
     attr_reader :personal_board, :opponent_board, :opponent, :strategy
     attr_reader :carrier, :battleship, :destroyer, :submarine, :patrolship

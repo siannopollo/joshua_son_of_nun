@@ -15,17 +15,6 @@ describe JoshuaSonOfNun::Board do
     @model.valid_spaces.should include(Space('A10'))
   end
   
-  it "should return the spaces for placement for a ship of given length" do
-    @model.spaces_for_placement(Space('A1 horizontal'), 4).should ==
-      [Space('A1'), Space('A2'), Space('A3'), Space('A4')]
-    
-    @model.spaces_for_placement(Space('A1 vertical'), 5).should ==
-      [Space('A1'), Space('B1'), Space('C1'), Space('D1'), Space('E1')]
-    
-    @model.spaces_for_placement(Space('A8 horizontal'), 5).should ==
-      [Space('A8'), Space('A9'), Space('A10'), nil, nil]
-  end
-  
   it "should calculate whether it can accomodate a ship at a certain space" do
     @model.accomodate?(Space('A1 horizontal'), 5).should be_true
     @model.accomodate?(Space('A10 horizontal'), 5).should be_false
@@ -43,7 +32,7 @@ describe JoshuaSonOfNun::Board do
   
   it "should be able to tell if a space is adjacent to the occupied spaces" do
     space = Space('D3 horizontal')
-    @model.occupied_spaces.concat(@model.spaces_for_placement(space, 5)) # D3, D4, D5, D6, D7
+    @model.occupied_spaces.concat(space.spaces_for_placement(5)) # D3, D4, D5, D6, D7
     
     @model.adjacent_to_occupied_spaces?(Space('C3 horizontal'), 5).should be_true
     @model.adjacent_to_occupied_spaces?(Space('E3 horizontal'), 5).should be_true
