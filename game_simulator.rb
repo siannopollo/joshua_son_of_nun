@@ -28,6 +28,7 @@ class GameSimulator
     @player_two = JoshuaSonOfNun::Player.new
     tag_players!
     
+    @moves = []
     @results = {@player_one.name => [], @player_two.name => []}
   end
   
@@ -68,6 +69,16 @@ class GameSimulator
     end
   end
   
+  def prepare_report
+    @filename = File.dirname(__FILE__) + "/reports/#{strategy_name(@player_one)}_vs_#{strategy_name(@player_two)}.csv"
+    `test -f #{@filename} && echo '' || echo '#{strategy_name(@player_one)},#{strategy_name(@player_two)},moves' > #{@filename}`
+  end
+  
+  def report_results
+    result = (@current_player == @player_one ? '1,0,' : '0,1,') + (@moves.last/2.0).ceil.to_s
+    `echo '#{result}' >> #{@filename}`
+  end
+  
   def reset
     @players = [@player_one, @player_two]
     
@@ -75,11 +86,13 @@ class GameSimulator
     @player_one.new_game(@player_two.name)
     force_strategy(player_two_strategy) unless player_two_strategy.nil?
     @player_two.new_game(@player_one.name)
+    prepare_report
     
     @ship_placement = {}
     @ships = [:battleship, :carrier, :destroyer, :patrolship, :submarine]
     gather_ship_placement
     
+    @moves << 0
     @game_over = false
   end
   
@@ -92,6 +105,7 @@ class GameSimulator
     end
     
     @results[@current_player.name] << strategy_name(@current_player)
+    report_results
   end
   
   def strategy_name(player)
@@ -99,7 +113,7 @@ class GameSimulator
   end
   
   def summarized_results
-    results.collect do |player, winning_strategies|
+    summary = results.collect do |player, winning_strategies|
       output = "#{player}:"
       output << " #{winning_strategies.size} wins"
       strategy_count = OLD_STRATEGIES.collect do |strategy|
@@ -108,12 +122,16 @@ class GameSimulator
       end
       output << " (#{strategy_count * ', '})"
     end.reverse * "\n"
+    average_moves = @moves.inject(0) {|sum, n| sum += n} / (2 * @moves.size.to_f)
+    summary << "\n#{average_moves} moves per game\n"
+    summary
   end
   
   def switch_turns
     @current_player = @players.shift
     @players << @current_player
     @opponent = @players.first
+    @moves << @moves.pop + 1
   end
   
   def tag_players!
@@ -127,5 +145,5 @@ class GameSimulator
 end
 
 simulator = GameSimulator.new(ARGV.shift, ARGV.shift)
-21.times {simulator.run!}
+(ARGV.shift || 21).to_i.times {simulator.run!}
 puts '', simulator.summarized_results, ''
