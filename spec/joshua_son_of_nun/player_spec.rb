@@ -18,9 +18,16 @@ describe JoshuaSonOfNun::Player do
     @model.opponent_board.should_not be_nil
   end
   
-  it "should always provide a valid target" do
+  it "should conform to the battleship API" do
     100.times do
       @model.next_target.should_not == ''
     end
+    lambda {@model.target_result('A1', false, false)}.should_not raise_error
+    lambda {@model.new_game('bob')}.should_not raise_error
+    @model.carrier_placement.should_not be_nil
+    @model.battleship_placement.should_not be_nil
+    @model.destroyer_placement.should_not be_nil
+    @model.submarine_placement.should_not be_nil
+    @model.patrolship_placement.should_not be_nil
   end
 end

@@ -146,5 +146,5 @@ end
 
 number_of_games = (ARGV.pop || 21).to_i
 simulator = GameSimulator.new(ARGV.shift, ARGV.shift)
-number_of_games.times {simulator.run!; sleep 0.6}
+number_of_games.times {simulator.run!}
 puts '', simulator.summarized_results, ''

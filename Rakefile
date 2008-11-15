@@ -32,7 +32,7 @@ spec = Gem::Specification.new do |s|
   ## spec attributes.
   ##
   ###########################################
-  s.description = "A battleship player"
+  s.description = "(using scary WWF wrestler voice) Just like the walls of Jericho, the same will happen to all battleship opponents of Joshua, son of Nun!!"
   s.author = "Steve Iannopollo"
   s.email = "steve@iannopollo.com"
 end
