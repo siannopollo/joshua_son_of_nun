@@ -67,14 +67,6 @@ describe JoshuaSonOfNun::Space do
     Space('D1').linear_spaces(Space('B1'), space_array('A1', 'B1', 'C1', 'D1')).should == [Space('E1')]
   end
   
-  it "should work as expected in an array" do
-    pending
-    array_one = space_array('A1', 'B2', 'C3')
-    array_two = space_array('A1', 'C3')
-    (array_one - array_two).should == [Space('B2')]
-    (array_one & array_two).should == [Space('A1'), Space('C3')]
-  end
-  
   def space_array(*coordinates)
     coordinates.collect {|c| Space(c)}
   end
