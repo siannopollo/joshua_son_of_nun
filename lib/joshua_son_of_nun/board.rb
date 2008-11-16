@@ -3,11 +3,11 @@ module JoshuaSonOfNun
     ROWS = ('A'..'J').to_a
     COLUMNS = ('1'..'10').to_a
     
-    attr_reader :width, :height, :valid_spaces
+    attr_reader :width, :height, :occupied_spaces, :valid_spaces
     
     def initialize
       @width, @height = 10, 10
-      @valid_spaces = []
+      @occupied_spaces, @valid_spaces = [], []
       ROWS.each do |row|
         COLUMNS.each do |column|
           @valid_spaces << Space.new(row, column)
@@ -28,10 +28,6 @@ module JoshuaSonOfNun
         success &= !occupied_spaces.include?(possible_space) && valid_spaces.include?(possible_space)
       end
       success
-    end
-    
-    def occupied_spaces
-      @occupied_spaces ||= []
     end
     
     def placement(ship_length)

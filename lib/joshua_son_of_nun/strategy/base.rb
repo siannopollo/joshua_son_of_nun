@@ -9,31 +9,32 @@ module JoshuaSonOfNun
     end
     
     class Base
-      attr_accessor :successful_targets
-      attr_reader :board, :current_target, :expended_targets, :immediate_targets, :targets
+      attr_reader :board, :current_target, :expended_targets, :immediate_targets,
+                  :possible_targets, :successful_targets, :targets
       
       def initialize(board)
         @board = board
+        @possible_targets = @board.valid_spaces.dup
         @targets = assign_targets
         @expended_targets, @successful_targets, @immediate_targets = [], [], []
       end
       
       def next_target
-        new_target = @immediate_targets.shift
+        new_target = immediate_targets.shift
         unless new_target.nil?
-          @targets.delete(new_target)
+          targets.delete(new_target)
         else
-          new_target = @targets.shift
+          new_target = targets.shift
         end
         
         @current_target = new_target
-        @expended_targets << @current_target
+        expended_targets << @current_target
         @current_target
       end
       
       def register_result!(ship_hit, ship_sunk)
         if ship_hit
-          @successful_targets << @current_target
+          successful_targets << current_target
           @immediate_targets = TargetingReaction.new(self, ship_sunk).react!
         end
       end
@@ -41,10 +42,6 @@ module JoshuaSonOfNun
       private
         def choose_target(index = rand(possible_targets.size))
           possible_targets.delete(possible_targets[index])
-        end
-        
-        def possible_targets
-          @possible_targets ||= @board.valid_spaces.dup
         end
         
         def random_direction

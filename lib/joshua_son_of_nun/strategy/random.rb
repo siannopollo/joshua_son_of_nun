@@ -5,8 +5,7 @@ module JoshuaSonOfNun
         def assign_targets
           targets = []
           possible_targets.size.times do |n|
-            i = 100 - n
-            targets << choose_target(rand(i))
+            targets << choose_target(rand(100 - n))
           end
           targets
         end

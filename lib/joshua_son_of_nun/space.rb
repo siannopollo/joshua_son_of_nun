@@ -20,22 +20,15 @@ module JoshuaSonOfNun
     end
     
     def adjacent?(other)
-      success = true
-      success &= begin
-        row_range = ((row_index == 0 ? 0 : row_index-1)..row_index+1)
-        other_row_range = ((other.row_index == 0 ? 0 : other.row_index-1)..other.row_index+1)
-        
-        row_range.include?(other.row_index) || other_row_range.include?(row_index)
-      end
-      
-      success &= begin
-        column_range = ((column_index == 0 ? 0 : column_index-1)..column_index+1)
-        other_column_range = ((other.column_index == 0 ? 0 : other.column_index-1)..other.column_index+1)
-        
-        column_range.include?(other.column_index) || other_column_range.include?(column_index)
-      end
-      
-      success
+      adjacent_row_range.include?(other.row_index) && adjacent_column_range.include?(other.column_index)
+    end
+    
+    def adjacent_column_range
+      ((column_index == 0 ? 0 : column_index-1)..column_index+1)
+    end
+    
+    def adjacent_row_range
+      ((row_index == 0 ? 0 : row_index-1)..row_index+1)
     end
     
     def column_index
@@ -43,12 +36,10 @@ module JoshuaSonOfNun
     end
     
     def crosswise_spaces
-      top, right, bottom, left = nil
-      
-      top    = (index = row_index - 1) < 0 ? nil : self.class.new(ROWS[index], column)
-      right  = (index = column_index + 1) > 9 ? nil : self.class.new(row, COLUMNS[index])
-      bottom = (index = row_index + 1) > 9 ? nil : self.class.new(ROWS[index], column)
-      left   = (index = column_index - 1) < 0 ? nil : self.class.new(row, COLUMNS[index])
+      top    = (index = row_index - 1) < 0 ? nil : Space.new(ROWS[index], column)
+      right  = (index = column_index + 1) > 9 ? nil : Space.new(row, COLUMNS[index])
+      bottom = (index = row_index + 1) > 9 ? nil : Space.new(ROWS[index], column)
+      left   = (index = column_index - 1) < 0 ? nil : Space.new(row, COLUMNS[index])
       [top, right, bottom, left].compact
     end
     
@@ -84,13 +75,13 @@ module JoshuaSonOfNun
     end
     
     def spaces_for_placement(ship_length)
-      if orientation == 'horizontal'
-        index = column_index || COLUMNS.size
-        (0..(ship_length - 1)).collect {|i| Space.new(row, COLUMNS[index + i].to_s) rescue nil}
+      args = if orientation == 'horizontal'
+        lambda {|i| [row, COLUMNS[column_index + i].to_s]}
       else
-        index = row_index || ROWS.size
-        (0..(ship_length - 1)).collect {|i| Space.new(ROWS[index + i].to_s, column) rescue nil}
+        lambda {|i| [ROWS[row_index + i].to_s, column]}
       end
+      
+      (0..(ship_length - 1)).collect {|i| Space.new(*args.call(i)) rescue nil}
     end
     
     def spaces_in_knighted_move(direction)
@@ -105,8 +96,7 @@ module JoshuaSonOfNun
       if r_index < 0 || c_index < 0 || r_index > 9 || c_index > 9
         nil
       else
-        row, column = ROWS[r_index], COLUMNS[c_index]
-        self.class.new(row, column)
+        Space.new(ROWS[r_index], COLUMNS[c_index])
       end
     end
     
@@ -126,8 +116,7 @@ module JoshuaSonOfNun
         if r_index < 0 || c_index < 0 || r_index > 9 || c_index > 9
           boundary_reached = true
         else
-          row, column = ROWS[r_index], COLUMNS[c_index]
-          spaces << self.class.new(row, column)
+          spaces << Space.new(ROWS[r_index], COLUMNS[c_index])
         end
       end
       
