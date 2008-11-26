@@ -68,7 +68,6 @@ describe JoshuaSonOfNun::Space do
       expended = space_array('A2', 'A3', 'A4', 'A5', 'A7')
       successful = space_array('A4', 'A5')
       Space('A4').linear_spaces(Space('A5'), expended, successful).should == [Space('A6')]
-      
     end
   end
   

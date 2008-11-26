@@ -143,19 +143,23 @@ module JoshuaSonOfNun
           side_two_spaces.delete(space)
         end
         
-        side_one_space, side_two_space = side_one_spaces.pop, side_two_spaces.shift
+        spaces = {
+          :side_one_space => side_one_spaces.pop,
+          :side_two_space => side_two_spaces.shift
+        }
         
         unless illegal_spaces.empty? || successful_spaces.empty?
           unsuccessful_spaces = illegal_spaces.reject {|s| successful_spaces.include?(s)}
-          if !side_one_space.nil? && unsuccessful_spaces.detect {|s| side_one_space.adjacent?(s)} && !successful_spaces.detect {|s| side_one_space.adjacent?(s)}
-            side_one_space = nil
-          end
-          if !side_two_space.nil? && unsuccessful_spaces.detect {|s| side_two_space.adjacent?(s)} && !successful_spaces.detect {|s| side_two_space.adjacent?(s)}
-            side_two_space = nil
+          
+          [:side_one_space, :side_two_space].each do |key|
+            space = spaces[key]
+            if !space.nil? && unsuccessful_spaces.detect {|s| space.adjacent?(s)} && !successful_spaces.detect {|s| space.adjacent?(s)}
+              spaces[key] = nil
+            end
           end
         end
         
-        [side_one_space, side_two_space]
+        [spaces[:side_one_space], spaces[:side_two_space]]
       end
   end
 end
