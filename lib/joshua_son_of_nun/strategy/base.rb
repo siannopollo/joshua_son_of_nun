@@ -1,7 +1,7 @@
 module JoshuaSonOfNun
   module Strategy
     def self.strategies
-      ['Random', 'Diagonal', 'Knight']
+      [['Random']*3, 'Diagonal', ['Knight']*2].flatten
     end
     
     def self.select(board)

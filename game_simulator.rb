@@ -77,6 +77,7 @@ class GameSimulator
   def report_results
     result = (@current_player == @player_one ? '1,0,' : '0,1,') + (@moves.last/2.0).ceil.to_s
     `echo '#{result}' >> #{@filename}`
+    print "\e[32m.\e[0m"; STDOUT.flush; sleep 0.1
   end
   
   def reset
@@ -116,7 +117,7 @@ class GameSimulator
     summary = results.collect do |player, winning_strategies|
       output = "#{player}:"
       output << " #{winning_strategies.size} wins"
-      strategy_count = OLD_STRATEGIES.collect do |strategy|
+      strategy_count = OLD_STRATEGIES.uniq.collect do |strategy|
         count = winning_strategies.select {|s| s == strategy}.size
         "#{strategy} => #{count}"
       end
