@@ -53,7 +53,7 @@ describe JoshuaSonOfNun::Strategy::Random do
     @model.next_target.should == Space('E7')
     @model.register_result! true, false
     
-    @model.next_target.should == Space('E3')
+    @model.next_target.should == Space('E8')
   end
   
   it "should track successful targets" do
