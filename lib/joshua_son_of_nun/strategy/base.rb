@@ -63,7 +63,7 @@ module JoshuaSonOfNun
         
         if targets_lined_up?
           targets = strategy.successful_targets
-          reject_expended(targets[-2].linear_spaces(targets.last, strategy.expended_targets))
+          reject_expended(targets[-2].linear_spaces(targets.last, strategy.expended_targets, strategy.successful_targets))
         else
           reject_expended(strategy.current_target.crosswise_spaces)
         end

@@ -43,22 +43,23 @@ module JoshuaSonOfNun
       [top, right, bottom, left].compact
     end
     
-    def linear_spaces(other, illegal_spaces = [])
+    def linear_spaces(other, all_illegal_spaces = [], successful_illegal_spaces = [])
       top, left, bottom, right = nil
-      illegal_spaces = illegal_spaces.dup.concat([self, other]).uniq
+      illegal_spaces = all_illegal_spaces.dup.concat([self, other]).uniq
+      successful_spaces = successful_illegal_spaces.dup
       
       if row_index == other.row_index
         left_index = (column_index < other.column_index ? column_index : other.column_index)
         right_index = left_index + 1
         
-        left, right = surrounding_linear_spaces(left_index, right_index, illegal_spaces) do |i, row, column|
+        left, right = surrounding_linear_spaces(left_index, right_index, illegal_spaces, successful_spaces) do |i, row, column|
           Space.new(row, COLUMNS[i])
         end
       elsif column_index == other.column_index
         top_index = (row_index < other.row_index ? row_index : other.row_index)
         bottom_index = top_index + 1
         
-        top, bottom = surrounding_linear_spaces(top_index, bottom_index, illegal_spaces) do |i, row, column|
+        top, bottom = surrounding_linear_spaces(top_index, bottom_index, illegal_spaces, successful_spaces) do |i, row, column|
           Space.new(ROWS[i], column)
         end
       end
@@ -133,7 +134,7 @@ module JoshuaSonOfNun
     end
     
     private
-      def surrounding_linear_spaces(side_one_index, side_two_index, illegal_spaces, &space_creation_block)
+      def surrounding_linear_spaces(side_one_index, side_two_index, illegal_spaces, successful_spaces, &space_creation_block)
         side_one_spaces  = (0..side_one_index).collect {|i| space_creation_block.call(i, row, column)}
         side_two_spaces = (side_two_index..9).collect {|i| space_creation_block.call(i, row, column)}
         
@@ -142,7 +143,19 @@ module JoshuaSonOfNun
           side_two_spaces.delete(space)
         end
         
-        [side_one_spaces.pop, side_two_spaces.shift]
+        side_one_space, side_two_space = side_one_spaces.pop, side_two_spaces.shift
+        
+        unless illegal_spaces.empty? || successful_spaces.empty?
+          unsuccessful_spaces = illegal_spaces.reject {|s| successful_spaces.include?(s)}
+          if !side_one_space.nil? && unsuccessful_spaces.detect {|s| side_one_space.adjacent?(s)} && !successful_spaces.detect {|s| side_one_space.adjacent?(s)}
+            side_one_space = nil
+          end
+          if !side_two_space.nil? && unsuccessful_spaces.detect {|s| side_two_space.adjacent?(s)} && !successful_spaces.detect {|s| side_two_space.adjacent?(s)}
+            side_two_space = nil
+          end
+        end
+        
+        [side_one_space, side_two_space]
       end
   end
 end

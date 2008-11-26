@@ -56,15 +56,20 @@ describe JoshuaSonOfNun::Space do
     space_array('D3', 'C4').should include(@model.spaces_in_knighted_move(:northwest))
   end
   
-  it "should know which spaces are linear to two given spaces, and return the two immediate closest spaces" do
-    Space('E6').linear_spaces(Space('E5')).should == space_array('E4', 'E7')
-    Space('E5').linear_spaces(Space('D5')).should == space_array('C5', 'F5')
-    @model.linear_spaces(Space('A2')).should == [Space('A3')]
-    @model.linear_spaces(Space('B1')).should == [Space('C1')]
+  describe "linear spaces" do
+    it "should know which spaces are linear to two given spaces, and return the two immediate closest spaces" do
+      Space('E6').linear_spaces(Space('E5')).should == space_array('E4', 'E7')
+      Space('E5').linear_spaces(Space('D5')).should == space_array('C5', 'F5')
+      @model.linear_spaces(Space('A2')).should == [Space('A3')]
+      @model.linear_spaces(Space('B1')).should == [Space('C1')]
+    end
     
-    Space('E6').linear_spaces(Space('E5'), [Space('E4')]).should == space_array('E3', 'E7')
-    Space('E5').linear_spaces(Space('D5'), [Space('C5')]).should == space_array('B5', 'F5')
-    Space('D1').linear_spaces(Space('B1'), space_array('A1', 'B1', 'C1', 'D1')).should == [Space('E1')]
+    it "should not return spaces that are beyond spaces that have been targeted but were not successful" do
+      expended = space_array('A2', 'A3', 'A4', 'A5', 'A7')
+      successful = space_array('A4', 'A5')
+      Space('A4').linear_spaces(Space('A5'), expended, successful).should == [Space('A6')]
+      
+    end
   end
   
   def space_array(*coordinates)
