@@ -77,7 +77,7 @@ class GameSimulator
   def report_results
     result = (@current_player == @player_one ? '1,0,' : '0,1,') + (@moves.last/2.0).ceil.to_s
     `echo '#{result}' >> #{@filename}`
-    print "\e[32m.\e[0m"; STDOUT.flush; sleep 0.1
+    print "\e[32m.\e[0m"; STDOUT.flush
   end
   
   def reset
