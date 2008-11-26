@@ -1,0 +1,15 @@
+== Joshua, Son of Nun
+
+This is my entry for the ruby battleship sparring tournament (http://sparring.rubyforge.org/battleship/index.html).
+
+I also built a game simulator so testing of my player didn't have to depend on LimeLight. You can run 100 games like so:
+
+  ruby game_simulator.rb 100
+  
+You can also specify which strategy you would like each player to have. So, if you want to run 200 games where player 1 uses the Random strategy and player 2 uses the Knight strategy, you would use the following command:
+  
+  ruby game_simulator.rb Random Knight 200
+
+== License
+
+This is mine. Don't steal it! :-)
