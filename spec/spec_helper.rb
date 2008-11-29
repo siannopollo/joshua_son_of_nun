@@ -16,3 +16,7 @@ def Space(string)
   row, column = coordinates.scan(/(\w)(\d{1,2})/).first
   JoshuaSonOfNun::Space.new(row, column, orientation)
 end
+
+def space_array(*coordinates)
+  coordinates.collect {|c| Space(c)}
+end

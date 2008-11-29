@@ -83,11 +83,9 @@ describe JoshuaSonOfNun::Strategy::Diagonal do
     target = Space('E5')
     expected_next_target = Space('F6')
     
-    if @model.targets.index(target) < @model.targets.index(expected_next_target)
-      @model.targets[@model.targets.index(target) + 1].should == expected_next_target
-    else
-      @model.targets[@model.targets.index(expected_next_target) + 1].should == Space('G7')
-    end
+    # One of these spaces may have already been placed in the targeting array,
+    # so checking to make sure at least one of these spaces is the next space
+    space_array('F6', 'G7', 'H8', 'I9', 'J10').should include(@model.targets[@model.targets.index(target) + 1])
   end
 end
 

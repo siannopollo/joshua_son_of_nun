@@ -70,8 +70,4 @@ describe JoshuaSonOfNun::Space do
       Space('A4').linear_spaces(Space('A5'), expended, successful).should == [Space('A6')]
     end
   end
-  
-  def space_array(*coordinates)
-    coordinates.collect {|c| Space(c)}
-  end
 end
