@@ -5,11 +5,6 @@ describe JoshuaSonOfNun::Board do
     @model = JoshuaSonOfNun::Board.new
   end
   
-  it "should have a width and height" do
-    @model.width.should == 10
-    @model.height.should == 10
-  end
-  
   it "should know about which spaces are valid" do
     @model.valid_spaces.should include(Space('A1'))
     @model.valid_spaces.should include(Space('A10'))

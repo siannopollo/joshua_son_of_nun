@@ -62,7 +62,7 @@ class GameSimulator
     players.each do |player|
       placement = {}
       ships.each do |ship|
-        placement[ship] = Space(player.send("#{ship}_placement")).spaces_for_placement(player.send(ship).length)
+        placement[ship] = Space(player.send("#{ship}_placement")).spaces_for_placement(player.instance_variable_get("@#{ship}").length)
       end
       
       ship_placement[player.name] = placement
@@ -110,7 +110,7 @@ class GameSimulator
   end
   
   def strategy_name(player)
-    player.strategy.class.name.split("::").last
+    player.instance_variable_get('@strategy').class.name.split("::").last
   end
   
   def summarized_results

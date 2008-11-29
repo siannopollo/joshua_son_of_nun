@@ -23,14 +23,6 @@ module JoshuaSonOfNun
       adjacent_row_range.include?(other.row_index) && adjacent_column_range.include?(other.column_index)
     end
     
-    def adjacent_column_range
-      ((column_index == 0 ? 0 : column_index-1)..column_index+1)
-    end
-    
-    def adjacent_row_range
-      ((row_index == 0 ? 0 : row_index-1)..row_index+1)
-    end
-    
     def column_index
       COLUMNS.index(column)
     end
@@ -49,25 +41,15 @@ module JoshuaSonOfNun
       successful_spaces = successful_illegal_spaces.dup
       
       if row_index == other.row_index
-        left_index = (column_index < other.column_index ? column_index : other.column_index)
-        right_index = left_index + 1
-        
-        left, right = surrounding_linear_spaces(left_index, right_index, illegal_spaces, successful_spaces) do |i, row, column|
-          Space.new(row, COLUMNS[i])
-        end
+        left, right = assign_left_and_right(other.column_index, illegal_spaces, successful_spaces)
       elsif column_index == other.column_index
-        top_index = (row_index < other.row_index ? row_index : other.row_index)
-        bottom_index = top_index + 1
-        
-        top, bottom = surrounding_linear_spaces(top_index, bottom_index, illegal_spaces, successful_spaces) do |i, row, column|
-          Space.new(ROWS[i], column)
-        end
+        top, bottom = assign_top_and_bottom(other.row_index, illegal_spaces, successful_spaces)
       end
       
       [top, left, bottom, right].compact
     end
     
-    def linear_to?(other)
+    def linear?(other)
       row_index == other.row_index || column_index == other.column_index
     end
     
@@ -76,10 +58,9 @@ module JoshuaSonOfNun
     end
     
     def spaces_for_placement(ship_length)
-      args = if orientation == 'horizontal'
-        lambda {|i| [row, COLUMNS[column_index + i].to_s]}
-      else
-        lambda {|i| [ROWS[row_index + i].to_s, column]}
+      args = case orientation
+      when 'horizontal': lambda {|i| [row, COLUMNS[column_index + i].to_s]}
+      when 'vertical':   lambda {|i| [ROWS[row_index + i].to_s, column]}
       end
       
       (0..(ship_length - 1)).collect {|i| Space.new(*args.call(i)) rescue nil}
@@ -134,6 +115,32 @@ module JoshuaSonOfNun
     end
     
     private
+      def adjacent_column_range
+        ((column_index == 0 ? 0 : column_index-1)..column_index+1)
+      end
+      
+      def adjacent_row_range
+        ((row_index == 0 ? 0 : row_index-1)..row_index+1)
+      end
+      
+      def assign_left_and_right(other_column_index, illegal_spaces, successful_spaces)
+        left_index = (column_index < other_column_index ? column_index : other_column_index)
+        right_index = left_index + 1
+        
+        surrounding_linear_spaces(left_index, right_index, illegal_spaces, successful_spaces) do |i, row, column|
+          Space.new(row, COLUMNS[i])
+        end
+      end
+      
+      def assign_top_and_bottom(other_row_index, illegal_spaces, successful_spaces)
+        top_index = (row_index < other_row_index ? row_index : other_row_index)
+        bottom_index = top_index + 1
+        
+        surrounding_linear_spaces(top_index, bottom_index, illegal_spaces, successful_spaces) do |i, row, column|
+          Space.new(ROWS[i], column)
+        end
+      end
+      
       def surrounding_linear_spaces(side_one_index, side_two_index, illegal_spaces, successful_spaces, &space_creation_block)
         side_one_spaces  = (0..side_one_index).collect {|i| space_creation_block.call(i, row, column)}
         side_two_spaces = (side_two_index..9).collect {|i| space_creation_block.call(i, row, column)}
@@ -153,9 +160,9 @@ module JoshuaSonOfNun
           
           [:side_one_space, :side_two_space].each do |key|
             space = spaces[key]
-            if !space.nil? && unsuccessful_spaces.detect {|s| space.adjacent?(s)} && !successful_spaces.detect {|s| space.adjacent?(s)}
-              spaces[key] = nil
-            end
+            spaces[key] = nil if !space.nil? &&
+                                 unsuccessful_spaces.detect {|s| space.adjacent?(s)} &&
+                                 !successful_spaces.detect {|s| space.adjacent?(s)}
           end
         end
         

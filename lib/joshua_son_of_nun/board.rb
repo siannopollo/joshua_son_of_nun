@@ -3,10 +3,9 @@ module JoshuaSonOfNun
     ROWS = ('A'..'J').to_a
     COLUMNS = ('1'..'10').to_a
     
-    attr_reader :width, :height, :occupied_spaces, :valid_spaces
+    attr_reader :occupied_spaces, :valid_spaces
     
     def initialize
-      @width, @height = 10, 10
       @occupied_spaces, @valid_spaces = [], []
       ROWS.each do |row|
         COLUMNS.each do |column|
@@ -23,11 +22,9 @@ module JoshuaSonOfNun
     end
     
     def accomodate?(space, ship_length)
-      success = true
-      space.spaces_for_placement(ship_length).each do |possible_space|
+      space.spaces_for_placement(ship_length).inject(true) do |success, possible_space|
         success &= !occupied_spaces.include?(possible_space) && valid_spaces.include?(possible_space)
       end
-      success
     end
     
     def placement(ship_length)
